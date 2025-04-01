@@ -11,7 +11,7 @@ This also contains the Swift Package Manager support
 ## Requirements
 
 + iOS 8
-+ macOS 10.10
++ macOS 10.11
 + tvOS 9.0
 + watchOS 2.0
 
@@ -65,6 +65,37 @@ For Swift Package Manager user, it's recommended to use the modular import inste
 
 ```swift
 import libwebp
+```
+
+## About sharpyuv
+
+From libwebp v1.2.3, Google separate some functions into a new standalone lib called `sharpyuv`. However, it dependeny source code from libwebp repo's `src` as implementation. Like llvm-project monorepo, one repo host multiple targets.
+
+Before v1.3.0, we hide these headers as internal headers.
+
+From v1.3.0, we expose the sharpyuv public headers, but not a standalone CocoaPods/SPM/Carthage Target. (In the future we may consider separate targets)
+
+If you want to use sharpyuv functions, do something like this:
+
++ Objective-C
+
+```
+// This does not supports module include
+#if __has_include(<sharpyuv/sharpyuv.h>)
+#import <sharpyuv/sharpyuv.h>
+#else
+#import <libwebp/sharpyuv.h> // bundled in libwebp's modulemap
+#endif
+```
+
++ Swift
+
+```swift
+#if canImport(sharpyuv)
+import sharpyuv
+#else
+import libwebp // bundled in libwebp's modulemap
+#endif
 ```
 
 ## License
